@@ -1,0 +1,175 @@
+Sure! Below are detailed API test cases based on the provided user story for user login functionality. The test cases are structured to include functional scenarios, negative cases, edge cases, and security considerations.
+
+### API Test Cases for User Login
+
+---
+
+#### 1. Functional Scenarios
+
+##### Test Case 1: Successful Login
+- **API Endpoint**: `POST /api/login`
+- **Request Payload**:
+  ```json
+  {
+    "username": "validUser",
+    "password": "validPassword"
+  }
+  ```
+- **Expected Response**:
+  - Status Code: `200 OK`
+  - Response Body:
+    ```json
+    {
+      "message": "Login successful",
+      "token": "<JWT or session token>"
+    }
+    ```
+
+##### Test Case 2: Invalid Password
+- **API Endpoint**: `POST /api/login`
+- **Request Payload**:
+  ```json
+  {
+    "username": "validUser",
+    "password": "invalidPassword"
+  }
+  ```
+- **Expected Response**:
+  - Status Code: `401 Unauthorized`
+  - Response Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+##### Test Case 3: Non-existing Username
+- **API Endpoint**: `POST /api/login`
+- **Request Payload**:
+  ```json
+  {
+    "username": "nonExistingUser",
+    "password": "somePassword"
+  }
+  ```
+- **Expected Response**:
+  - Status Code: `401 Unauthorized`
+  - Response Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+---
+
+#### 2. Negative Cases
+
+##### Test Case 4: Lock Account After 5 Failed Attempts
+- **API Endpoint**: `POST /api/login`
+- **Scenario**: Attempt to log in with incorrect password 5 times
+- **Request Payload** (5 consecutive requests):
+  ```json
+  {
+    "username": "validUser",
+    "password": "invalid"
+  }
+  ```
+- **Expected Response** (after 5 attempts):
+  - Status Code: `423 Locked`
+  - Response Body:
+    ```json
+    {
+      "error": "Account locked due to too many failed login attempts. Please try again later."
+    }
+    ```
+
+##### Test Case 5: Attempt Login After Account is Locked
+- **API Endpoint**: `POST /api/login`
+- **Request Payload**:
+  ```json
+  {
+    "username": "validUser",
+    "password": "validPassword"
+  }
+  ```
+- **Expected Response**:
+  - Status Code: `423 Locked`
+  - Response Body:
+    ```json
+    {
+      "error": "Account locked due to too many failed login attempts. Please try again later."
+    }
+    ```
+
+---
+
+#### 3. Edge Cases
+
+##### Test Case 6: Empty Username and Password
+- **API Endpoint**: `POST /api/login`
+- **Request Payload**:
+  ```json
+  {
+    "username": "",
+    "password": ""
+  }
+  ```
+- **Expected Response**:
+  - Status Code: `400 Bad Request`
+  - Response Body:
+    ```json
+    {
+      "error": "Username and password cannot be empty"
+    }
+    ```
+
+##### Test Case 7: SQL Injection Attempt
+- **API Endpoint**: `POST /api/login`
+- **Request Payload**:
+  ```json
+  {
+    "username": "validUser'; --",
+    "password": "password"
+  }
+  ```
+- **Expected Response**:
+  - Status Code: `401 Unauthorized` (or appropriate error)
+  - Response Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+---
+
+#### 4. Security Considerations
+
+##### Test Case 8: Rate Limiting
+- **API Endpoint**: `POST /api/login`
+- **Scenario**: Rapidly sending login requests
+- **Expected Response** (after exceeding rate limit):
+  - Status Code: `429 Too Many Requests`
+  - Response Body:
+    ```json
+    {
+      "error": "Too many login attempts. Please try again later."
+    }
+    ```
+
+##### Test Case 9: Brute Force Protection
+- **API Endpoint**: `POST /api/login`
+- **Scenario**: Attempting multiple logins with different usernames and passwords at high frequency
+- **Expected Response**:
+  - Status Code: Varies based on application logic (e.g., `429 Too Many Requests`)
+  - Response Body:
+    ```json
+    {
+      "error": "Too many failed login attempts. Try again later."
+    }
+    ```
+
+---
+
+This structured format covers a variety of scenarios to ensure a comprehensive test of the login API, including normal usage patterns, error responses, and security concerns related to account access.

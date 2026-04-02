@@ -1,0 +1,190 @@
+## API Test Cases for User Login
+
+### Test Case 1: Successful Login
+- **Description**: Verify that a user can log in with valid credentials.
+- **API Endpoint**: POST /api/login
+- **Request**:
+  - **Body**: 
+    ```json
+    {
+      "username": "validUser",
+      "password": "validPassword"
+    }
+    ```
+- **Expected Response**:
+  - **Status Code**: 200 OK
+  - **Body**: 
+    ```json
+    {
+      "message": "Login successful",
+      "token": "JWT_TOKEN_HERE"
+    }
+    ```
+
+### Test Case 2: Invalid Password
+- **Description**: Verify that logging in with an invalid password returns an error.
+- **API Endpoint**: POST /api/login
+- **Request**:
+  - **Body**: 
+    ```json
+    {
+      "username": "validUser",
+      "password": "invalidPassword"
+    }
+    ```
+- **Expected Response**:
+  - **Status Code**: 401 Unauthorized
+  - **Body**: 
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+### Test Case 3: Lock Account After 5 Failed Attempts
+- **Description**: Verify that the account is locked after 5 failed login attempts.
+- **Steps**:
+  1. Attempt to log in with the valid username and an invalid password for 5 times.
+- **API Endpoint**: POST /api/login
+- **Request**:
+  - **Body**: 
+    ```json
+    {
+      "username": "validUser",
+      "password": "invalidPassword"
+    }
+    ```
+- **Expected Response**: 5 iterations of the following:
+  - **Status Code**: 401 Unauthorized
+  - **Body**: 
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+- **On 6th Attempt**:
+  - **Request**:
+    ```json
+    {
+      "username": "validUser",
+      "password": "validPassword"
+    }
+    ```
+  - **Expected Response**:
+    - **Status Code**: 403 Forbidden
+    - **Body**: 
+    ```json
+    {
+      "error": "Account locked due to too many failed attempts."
+    }
+    ```
+
+### Negative Cases
+
+#### Test Case 4: Empty Username or Password
+- **Description**: Verify that submitting an empty username or password returns an error.
+- **API Endpoint**: POST /api/login
+- **Request**:
+  - **Body**: 
+    ```json
+    {
+      "username": "",
+      "password": "validPassword"
+    }
+    ```
+- **Expected Response**:
+  - **Status Code**: 400 Bad Request
+  - **Body**: 
+    ```json
+    {
+      "error": "Username and password cannot be empty"
+    }
+    ```
+
+- **Another Variation**:
+- **Request**:
+  ```json
+  {
+    "username": "validUser",
+    "password": ""
+  }
+  ```
+
+#### Test Case 5: Non-Existent Username
+- **Description**: Verify that logging in with a non-existent username returns an error.
+- **API Endpoint**: POST /api/login
+- **Request**:
+  - **Body**: 
+    ```json
+    {
+      "username": "nonExistentUser",
+      "password": "anyPassword"
+    }
+    ```
+- **Expected Response**:
+  - **Status Code**: 401 Unauthorized
+  - **Body**: 
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+### Edge Cases
+
+#### Test Case 6: SQL Injection Attempt
+- **Description**: Verify that the login API does not allow SQL injection.
+- **API Endpoint**: POST /api/login
+- **Request**:
+  - **Body**: 
+    ```json
+    {
+      "username": "' OR '1'='1",
+      "password": "' OR '1'='1"
+    }
+    ```
+- **Expected Response**:
+  - **Status Code**: 401 Unauthorized
+  - **Body**: 
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+### Security Considerations
+
+#### Test Case 7: Password Complexity Requirements
+- **Description**: Verify response when password does not meet security policies (minimum length, complexity).
+- **API Endpoint**: POST /api/login
+- **Request**:
+  - **Body**: 
+    ```json
+    {
+      "username": "validUser",
+      "password": "short"
+    }
+    ```
+- **Expected Response**:
+  - **Status Code**: 400 Bad Request
+  - **Body**: 
+    ```json
+    {
+      "error": "Password does not meet complexity requirements."
+    }
+    ```
+
+#### Test Case 8: Rate Limiting
+- **Description**: Verify that the API enforces rate limits on login attempts.
+- **Setup**: If possible, simulate multiple requests in quick succession.
+- **Expected Result**: After a certain limit (e.g., 10 requests in 1 minute), subsequent requests should be blocked.
+- **Response After Exceeding Limit**:
+  - **Status Code**: 429 Too Many Requests
+  - **Body**: 
+    ```json
+    {
+      "error": "Too many login attempts. Please try again later."
+    }
+    ```
+
+These test cases cover a range of functional and negative scenarios as well as edge cases and security considerations to ensure the login functionality works robustly and securely.

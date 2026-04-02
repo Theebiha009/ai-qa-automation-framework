@@ -1,0 +1,180 @@
+Certainly! Below is a structured format of detailed API test cases derived from the provided user story.
+
+---
+
+### API Test Cases for User Login Functionality
+
+#### User Story:
+As a user, I want to log in with my username and password so that I can access my account securely.
+
+---
+
+### 1. Functional Scenarios
+
+#### Test Case 1: Successful login
+- **API Endpoint**: `POST /api/login`
+- **Request Body**:
+    ```json
+    {
+        "username": "validUser",
+        "password": "validPassword"
+    }
+    ```
+- **Expected Response**:
+    - Status Code: `200 OK`
+    - Response Body:
+    ```json
+    {
+        "message": "Login successful",
+        "token": "someAuthToken"
+    }
+    ```
+
+#### Test Case 2: Invalid password
+- **API Endpoint**: `POST /api/login`
+- **Request Body**:
+    ```json
+    {
+        "username": "validUser",
+        "password": "invalidPassword"
+    }
+    ```
+- **Expected Response**:
+    - Status Code: `401 Unauthorized`
+    - Response Body:
+    ```json
+    {
+        "error": "Invalid username or password"
+    }
+    ```
+
+#### Test Case 3: Username not found
+- **API Endpoint**: `POST /api/login`
+- **Request Body**:
+    ```json
+    {
+        "username": "nonExistentUser",
+        "password": "anyPassword"
+    }
+    ```
+- **Expected Response**:
+    - Status Code: `401 Unauthorized`
+    - Response Body:
+    ```json
+    {
+        "error": "Invalid username or password"
+    }
+    ```
+
+---
+
+### 2. Negative Cases
+
+#### Test Case 4: Account lock after 5 failed attempts
+- **Description**: Attempt to log in with an invalid password 5 times.
+- **API Endpoint**: `POST /api/login`
+- **Simulated Failures**:
+    - Attempt 1-5: 
+        - Request Body:
+        ```json
+        {
+            "username": "validUser",
+            "password": "wrongPassword"
+        }
+        ```
+    - Expected Response for Attempts 1-4:
+        - Status Code: `401 Unauthorized`
+        - Response Body:
+        ```json
+        {
+            "error": "Invalid username or password"
+        }
+        ```
+    - Expected Response for Attempt 5 (Account Locked):
+        - Status Code: `403 Forbidden`
+        - Response Body:
+        ```json
+        {
+            "error": "Account is temporarily locked due to too many unsuccessful login attempts"
+        }
+        ```
+
+---
+
+### 3. Edge Cases
+
+#### Test Case 5: Extremely long username and password
+- **API Endpoint**: `POST /api/login`
+- **Request Body**:
+    ```json
+    {
+        "username": "a_very_long_username_exceeding_the_limit",
+        "password": "a_very_long_password_exceeding_the_limit"
+    }
+    ```
+- **Expected Response**:
+    - Status Code: `400 Bad Request`
+    - Response Body:
+    ```json
+    {
+        "error": "Username or password exceeds maximum length"
+    }
+    ```
+
+#### Test Case 6: Empty username and password
+- **API Endpoint**: `POST /api/login`
+- **Request Body**:
+    ```json
+    {
+        "username": "",
+        "password": ""
+    }
+    ```
+- **Expected Response**:
+    - Status Code: `400 Bad Request`
+    - Response Body:
+    ```json
+    {
+        "error": "Username and password cannot be empty"
+    }
+    ```
+
+---
+
+### 4. Security Considerations
+
+#### Test Case 7: SQL Injection attempt
+- **API Endpoint**: `POST /api/login`
+- **Request Body**:
+    ```json
+    {
+        "username": "' OR '1'='1",
+        "password": "' OR '1'='1"
+    }
+    ```
+- **Expected Response**:
+    - Status Code: `400 Bad Request` or `401 Unauthorized`
+    - Response Body:
+    ```json
+    {
+        "error": "Invalid username or password"
+    }
+    ```
+- **Note**: Ensure that the system handles SQL injections properly, preventing unauthorized access or information disclosure.
+
+#### Test Case 8: Rate limiting after multiple login attempts
+- **Description**: Test if the API implements rate limiting after several failed login attempts.
+- **Repeated Request**: Attempt to log in with incorrect password repeatedly within a short time frame.
+- **Expected Response after exceeding limits**:
+    - Status Code: `429 Too Many Requests`
+    - Response Body:
+    ```json
+    {
+        "error": "Too many login attempts. Please try again later."
+    }
+    ```
+
+---
+
+### Conclusion
+This structured format includes functional scenarios, negative cases, edge cases, and security considerations necessary for comprehensive API testing of the user login feature. Each test case covers different aspects that ensure the system is robust, secure, and user-friendly.

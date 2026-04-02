@@ -1,0 +1,17 @@
+[
+  {
+    "test_name": "test_login",
+    "api": "login",
+    "status_code": 500,
+    "error_type": "status_code",
+    "message": "Internal Server Error",
+    "timestamp": "2026-03-29T10:00:00"
+  },
+  {
+    "test_name": "test_payment",
+    "api": "payment",
+    "error_type": "timeout",
+    "message": "Request timed out",
+    "timestamp": "2026-03-29T10:01:00"
+  }
+]

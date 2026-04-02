@@ -1,0 +1,47 @@
+Certainly! Below is a structured format for the API test cases derived from the given user story.
+
+### API Test Cases for User Login
+
+#### 1. **Functional Scenarios**
+
+| Test Case ID | Description                                               | Input/Request                             | Expected Response                         |
+|--------------|-----------------------------------------------------------|------------------------------------------|------------------------------------------|
+| TC-FS-001    | Successful login with valid credentials                   | { "username": "validUser", "password": "validPass" } | Status: 200, Body: { "message": "Login successful", "token": "JWT_token" } |
+| TC-FS-002    | Unsuccessful login with valid username and invalid password | { "username": "validUser", "password": "invalidPass" } | Status: 401, Body: { "message": "Invalid username or password" } |
+| TC-FS-003    | Account lock after 5 failed login attempts                | Followed by 5 attempts: { "username": "validUser", "password": "invalidPass" } | Status: 423, Body: { "message": "Account locked due to too many failed attempts" } |
+| TC-FS-004    | Successful login after account reset                       | Reset account and use valid credentials  | Status: 200, Body: { "message": "Login successful", "token": "JWT_token" } |
+
+#### 2. **Negative Cases**
+
+| Test Case ID | Description                                               | Input/Request                             | Expected Response                         |
+|--------------|-----------------------------------------------------------|------------------------------------------|------------------------------------------|
+| TC-NC-001    | Login attempt with non-existent username                  | { "username": "nonExistentUser", "password": "anyPass" } | Status: 401, Body: { "message": "Invalid username or password" } |
+| TC-NC-002    | Login attempt with empty username                          | { "username": "", "password": "validPass" } | Status: 400, Body: { "message": "Username is required" } |
+| TC-NC-003    | Login attempt with empty password                          | { "username": "validUser", "password": "" } | Status: 400, Body: { "message": "Password is required" } |
+| TC-NC-004    | Attempting to log in after account lock                   | Attempt login with { "username": "validUser", "password": "validPass" } | Status: 423, Body: { "message": "Account locked due to too many failed attempts" } |
+| TC-NC-005    | Login with SQL Injection in username                       | { "username": "' OR '1'='1", "password": "pass" } | Status: 401, Body: { "message": "Invalid username or password" } |
+
+#### 3. **Edge Cases**
+
+| Test Case ID | Description                                               | Input/Request                             | Expected Response                         |
+|--------------|-----------------------------------------------------------|------------------------------------------|------------------------------------------|
+| TC-EC-001    | Login with very long username                             | { "username": "u" repeated 256 times, "password": "validPass" } | Status: 400, Body: { "message": "Username too long" } |
+| TC-EC-002    | Login with very long password                             | { "username": "validUser", "password": "p" repeated 256 times } | Status: 400, Body: { "message": "Password too long" } |
+| TC-EC-003    | Login with whitespace in username and password           | { "username": " validUser ", "password": " validPass " } | Status: 200, Body: { "message": "Login successful", "token": "JWT_token" } (if stripped) <br> or <br> Status: 401, Body: { "message": "Invalid username or password" } (if not stripped) |
+| TC-EC-004    | Login immediately after 5 failed attempts without waiting | { "username": "validUser", "password": "invalidPass" } (6th attempt) | Status: 423, Body: { "message": "Account locked due to too many failed attempts" } |
+
+#### 4. **Security Considerations**
+
+| Test Case ID | Description                                               | Input/Request                             | Expected Response                         |
+|--------------|-----------------------------------------------------------|------------------------------------------|------------------------------------------|
+| TC-SC-001    | Check for response time during authentication attempts    | Perform multiple rapid login requests   | Response time should not exceed X seconds |
+| TC-SC-002    | Prevent account enumeration by timing responses.          | { "username": "user1", "password": "pass" } vs. { "username": "user2", "password": "pass" } | Should provide similar time response for both |
+| TC-SC-003    | Verify rate-limiting after multiple failed login attempts  | Making more than 5 failed attempts in a short time | Subsequent attempts should return Status: 429, Body: { "message": "Too many requests" } |
+| TC-SC-004    | Validate prevention against brute force attack            | Rapidly attempt to login with a script | Should lock account after 5 attempts, respond with 423 |
+
+### Notes:
+- Ensure that all responses conform to the expected structure defined in the API documentation.
+- Replace any placeholder values such as "validUser", "validPass", "JWT_token" with actual test data as required.
+- Adjust the expected response and statuses according to actual application behavior and API design.
+
+This structured format allows QA engineers to clearly understand the various test cases related to user login functionality, covering a wide range of scenarios from functional to security concerns.

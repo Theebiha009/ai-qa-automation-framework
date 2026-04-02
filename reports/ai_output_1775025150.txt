@@ -1,0 +1,158 @@
+Here is a detailed API test case structure based on the provided user story regarding user authentication, including functional scenarios, negative cases, edge cases, and security considerations.
+
+### Test Case Structure
+
+#### 1. Test Case: Valid Login
+- **Description**: Verify that a user can log in successfully with valid credentials.
+- **API Endpoint**: POST `/api/login`
+- **Request Body**:
+  ```json
+  {
+    "username": "validUser",
+    "password": "validPassword123"
+  }
+  ```
+- **Expected Response**:
+  - Status Code: `200 OK`
+  - Response Body:
+    ```json
+    {
+      "message": "Login successful",
+      "token": "JWT Token"
+    }
+    ```
+
+#### 2. Test Case: Invalid Password
+- **Description**: Verify that an error is returned for an invalid password.
+- **API Endpoint**: POST `/api/login`
+- **Request Body**:
+  ```json
+  {
+    "username": "validUser",
+    "password": "invalidPassword"
+  }
+  ```
+- **Expected Response**:
+  - Status Code: `401 Unauthorized`
+  - Response Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+#### 3. Test Case: Lock Account After 5 Failed Attempts
+- **Description**: Verify that the account is locked after 5 consecutive failed login attempts.
+- **API Endpoint**: POST `/api/login`
+- **Test Steps**:
+  1. Attempt to log in with invalid credentials 5 times.
+- **Request Body** (for 5 attempts):
+```json
+{
+    "username": "validUser",
+    "password": "invalidPassword"
+}
+```
+- **Expected Response** (for attempts 1-5):
+  - Status Code: `401 Unauthorized`
+  - Response Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+- **Expected Response** (6th attempt):
+  - Status Code: `423 Locked`
+  - Response Body:
+    ```json
+    {
+      "error": "Your account is locked due to multiple failed login attempts. Please try again later."
+    }
+    ```
+
+#### 4. Test Case: Excessive Attempts Without Lock
+- **Description**: Verify that the user is still able to log in after the error message for a valid username and invalid password if they haven't reached the lock threshold.
+- **API Endpoint**: POST `/api/login`
+- **Request Body**:
+  ```json
+  {
+    "username": "validUser",
+    "password": "password123"
+  }
+  ```
+- **Expected Response**:
+  - Status Code: `401 Unauthorized`
+  - Response Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+#### 5. Test Case: Edge Case - SQL Injection Attempt
+- **Description**: Verify the system's response to SQL Injection attempts in the username field.
+- **API Endpoint**: POST `/api/login`
+- **Request Body**:
+  ```json
+  {
+    "username": "' OR '1'='1",
+    "password": "anyPassword"
+  }
+  ```
+- **Expected Response**:
+  - Status Code: `401 Unauthorized`
+  - Response Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+#### 6. Test Case: Edge Case - Special Characters in Credentials
+- **Description**: Verify the system's response when username/password contains special characters.
+- **API Endpoint**: POST `/api/login`
+- **Request Body**:
+  ```json
+  {
+    "username": "user!@#",
+    "password": "pass$%^"
+  }
+  ```
+- **Expected Response**:
+  - Status Code: `200 OK`
+  - Response Body:
+    ```json
+    {
+      "message": "Login successful",
+      "token": "JWT Token"
+    }
+    ```
+
+#### 7. Test Case: Rate Limiting
+- **Description**: Verify that an API is protected against brute force by limiting login attempts.
+- **API Endpoint**: POST `/api/login`
+- **Request Body**: Multiple invalid attempts in a quick succession
+- **Expected Response**:
+  - After numerous consecutive failed attempts:
+  - Status Code: `429 Too Many Requests`
+  - Response Body:
+    ```json
+    {
+      "error": "Too many login attempts. Please try again later."
+    }
+    ```
+
+#### 8. Security Considerations
+- **Test Case: Password Storage**
+  - Verify that passwords are stored securely in a hashed format (not in plain text).
+  
+- **Test Case: Token Expiry**
+  - Validate that the JWT token expires after a set time frame and cannot be reused.
+
+- **Test Case: HTTPS Usage**
+  - Confirm that the login API endpoint is only accessible via HTTPS to ensure secure transmission of credentials.
+
+- **Test Case: Session Management**
+  - Verify that sessions are invalidated after logout to prevent session fixation attacks.
+
+These test cases comprehensively cover the functionality, negative and edge cases, and security considerations for the login user story provided.
