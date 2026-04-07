@@ -1,0 +1,3 @@
+Login Response: {"token":"77c10fb5ed4d371"}
+Create Booking Response: {"bookingid":652,"booking":{"firstname":"John","lastname":"Doe","totalprice":100,"depositpaid":true,"bookingdates":{"checkin":"2024-01-01","checkout":"2024-01-05"},"additionalneeds":"Breakfast"}}
+Created Booking: {'bookingid': 652, 'booking': {'firstname': 'John', 'lastname': 'Doe', 'totalprice': 100, 'depositpaid': True, 'bookingdates': {'checkin': '2024-01-01', 'checkout': '2024-01-05'}, 'additionalneeds': 'Breakfast'}}

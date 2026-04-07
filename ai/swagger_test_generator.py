@@ -23,8 +23,7 @@ class SwaggerTestGenerator:
     @staticmethod
     def clean_generated_code(code: str) -> str:
         # Remove markdowns blocks
-        code = re.sub(r"```python", "", code)
-        code = re.sub(r"```", "", code)
+        code = code.replace("```python", "").replace("```", "")
 
         # Remove leading/trailing spaces
         return code.strip()

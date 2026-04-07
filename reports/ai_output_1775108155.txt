@@ -1,0 +1,195 @@
+# API Test Cases for User Login
+
+## User Story 
+As a user, I want to log in with my username and password so that I can access my account. The system should provide feedback for invalid credentials, and lock my account after 5 failed login attempts.
+
+## Test Cases Structure
+
+### 1. Functional Scenarios
+#### 1.1 Successful Login
+- **Test Case ID**: TC001
+- **Description**: Verify that a user can log in successfully with valid credentials.
+- **API Endpoint**: `POST /api/login`
+- **Request Body**:
+    ```json
+    {
+        "username": "validUser",
+        "password": "validPassword"
+    }
+    ```
+- **Expected Response**:
+    - HTTP Status Code: 200 OK
+    - Response Body: 
+    ```json
+    {
+        "message": "Login successful",
+        "token": "JWT_TOKEN"
+    }
+    ```
+
+### 2. Negative Cases
+#### 2.1 Invalid Username
+- **Test Case ID**: TC002
+- **Description**: Verify that the system returns an error when the username does not exist.
+- **API Endpoint**: `POST /api/login`
+- **Request Body**: 
+    ```json
+    {
+        "username": "invalidUser",
+        "password": "validPassword"
+    }
+    ```
+- **Expected Response**:
+    - HTTP Status Code: 401 Unauthorized
+    - Response Body: 
+    ```json
+    {
+        "error": "Invalid username or password"
+    }
+    ```
+
+#### 2.2 Invalid Password
+- **Test Case ID**: TC003
+- **Description**: Verify that the system returns an error when the password is incorrect.
+- **API Endpoint**: `POST /api/login`
+- **Request Body**: 
+    ```json
+    {
+        "username": "validUser",
+        "password": "invalidPassword"
+    }
+    ```
+- **Expected Response**:
+    - HTTP Status Code: 401 Unauthorized
+    - Response Body: 
+    ```json
+    {
+        "error": "Invalid username or password"
+    }
+    ```
+
+#### 2.3 Account Locking after 5 Failed Attempts
+- **Test Case ID**: TC004
+- **Description**: Verify that the account gets locked after 5 failed login attempts.
+- **Procedure**:
+    - Attempt to log in 5 times with invalid password.
+    - Log in the 6th time with the valid username and password.
+- **API Endpoint**: `POST /api/login` (5 attempts)
+- **Request Body**: 
+    ```json
+    {
+        "username": "validUser",
+        "password": "invalidPassword"
+    }
+    ```
+- **Expected Response for the first 5 Attempts**:
+    - HTTP Status Code: 401 Unauthorized
+    - Response Body: 
+    ```json
+    {
+        "error": "Invalid username or password"
+    }
+    ```
+- **API Endpoint**: `POST /api/login` (6th attempt)
+- **Request Body**: 
+    ```json
+    {
+        "username": "validUser",
+        "password": "validPassword"
+    }
+    ```
+- **Expected Response**:
+    - HTTP Status Code: 403 Forbidden
+    - Response Body: 
+    ```json
+    {
+        "error": "Account is locked due to multiple failed login attempts"
+    }
+    ```
+
+### 3. Edge Cases
+#### 3.1 Missing Username
+- **Test Case ID**: TC005
+- **Description**: Verify that the system returns an error when the username is missing from the request.
+- **API Endpoint**: `POST /api/login`
+- **Request Body**: 
+    ```json
+    {
+        "password": "validPassword"
+    }
+    ```
+- **Expected Response**:
+    - HTTP Status Code: 400 Bad Request
+    - Response Body: 
+    ```json
+    {
+        "error": "Username is required"
+    }
+    ```
+
+#### 3.2 Missing Password
+- **Test Case ID**: TC006
+- **Description**: Verify that the system returns an error when the password is missing from the request.
+- **API Endpoint**: `POST /api/login`
+- **Request Body**: 
+    ```json
+    {
+        "username": "validUser"
+    }
+    ```
+- **Expected Response**:
+    - HTTP Status Code: 400 Bad Request
+    - Response Body: 
+    ```json
+    {
+        "error": "Password is required"
+    }
+    ```
+
+#### 3.3 Empty Credentials
+- **Test Case ID**: TC007
+- **Description**: Verify that the system returns an error when both username and password are missing.
+- **API Endpoint**: `POST /api/login`
+- **Request Body**: 
+    ```json
+    {}
+    ```
+- **Expected Response**:
+    - HTTP Status Code: 400 Bad Request
+    - Response Body: 
+    ```json
+    {
+        "error": "Username and password are required"
+    }
+    ```
+
+### 4. Security Considerations
+#### 4.1 SQL Injection Test
+- **Test Case ID**: TC008
+- **Description**: Ensure that the API is protected against SQL injection by providing malicious input.
+- **API Endpoint**: `POST /api/login`
+- **Request Body**: 
+    ```json
+    {
+        "username": "' OR '1'='1",
+        "password": "' OR '1'='1"
+    }
+    ```
+- **Expected Response**:
+    - HTTP Status Code: 401 Unauthorized
+    - Response Body: 
+    ```json
+    {
+        "error": "Invalid username or password"
+    }
+    ```
+
+#### 4.2 Brute Force Attack Prevention
+- **Test Case ID**: TC009
+- **Description**: Verify that the system has mechanisms to prevent brute force attacks, by testing with rapid successive attempts.
+- **Procedure**: Attempt logging in with invalid credentials multiple times in quick succession.
+- **Expected Response**:
+    - After 5 failed attempts, ensure appropriate locking mechanism is triggered (as tested in TC004).
+
+### Conclusion
+These API test cases cover a range of functional, negative, edge, and security aspects for user login functionality. Each test case is clearly defined with its expected outcome, helping to ensure that the login process remains secure and user-friendly.

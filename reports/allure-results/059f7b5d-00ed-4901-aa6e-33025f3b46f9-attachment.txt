@@ -1,0 +1,89 @@
+
+AI Generated Test Cases:
+
+Certainly! Below are test cases for a Login API, categorized into positive cases, negative cases, and edge cases.
+
+### Positive Cases
+
+**Test Case ID:** TC001  
+**Description:** Successful login with valid credentials.  
+**Steps:**  
+1. Send a POST request to the Login API endpoint with valid email and password.  
+2. Check response status and body.  
+**Expected Result:** Status code 200, response contains a success message and an authentication token.  
+
+---
+
+**Test Case ID:** TC002  
+**Description:** Successful login with correct case-sensitive credentials.  
+**Steps:**  
+1. Send a POST request to the Login API with email "User@example.com" and password "Password123".  
+2. Check response status and body.  
+**Expected Result:** Status code 200, response contains a success message and an authentication token.  
+
+---
+
+**Test Case ID:** TC003  
+**Description:** Successful login for a user with special characters in the password.  
+**Steps:**  
+1. Send a POST request to the Login API with valid email "user@example.com" and password "P@ssw0rd!".  
+2. Check response status and body.  
+**Expected Result:** Status code 200, response contains a success message and an authentication token.  
+
+### Negative Cases
+
+**Test Case ID:** TC004  
+**Description:** Login attempt with incorrect password.  
+**Steps:**  
+1. Send a POST request to the Login API with valid email "user@example.com" and incorrect password "WrongPassword".  
+2. Check response status and body.  
+**Expected Result:** Status code 401, response contains an error message indicating "Invalid credentials".  
+
+---
+
+**Test Case ID:** TC005  
+**Description:** Login attempt with non-existing email.  
+**Steps:**  
+1. Send a POST request to the Login API with email "nonexistent@example.com" and any password.  
+2. Check response status and body.  
+**Expected Result:** Status code 404, response contains an error message indicating "User not found".  
+
+---
+
+**Test Case ID:** TC006  
+**Description:** Login attempt with empty email and password fields.  
+**Steps:**  
+1. Send a POST request to the Login API with both email and password fields empty.  
+2. Check response status and body.  
+**Expected Result:** Status code 400, response contains an error message indicating "Email and password are required".  
+
+### Edge Cases
+
+**Test Case ID:** TC007  
+**Description:** Login attempt with extremely long email.  
+**Steps:**  
+1. Send a POST request to the Login API with an email having 256 characters (maximum allowed is typically 254 for emails), e.g., "a...@example.com" with a long username part.  
+2. Check response status and body.  
+**Expected Result:** Status code 400, response contains an error message indicating "Email format is invalid".  
+
+---
+
+**Test Case ID:** TC008  
+**Description:** Login attempt with SQL injection in email field.  
+**Steps:**  
+1. Send a POST request to the Login API with email "user@example.com' OR '1'='1" and valid password.  
+2. Check response status and body.  
+**Expected Result:** Status code 401, response contains an error message indicating "Invalid credentials" (indicating the system is not vulnerable to SQL injection).  
+
+---
+
+**Test Case ID:** TC009  
+**Description:** Login attempt with special characters in email.  
+**Steps:**  
+1. Send a POST request to the Login API with email "user!#$%&'*+/=?^_`{|}~@example.com" and valid password.  
+2. Check response status and body.  
+**Expected Result:** Status code 200 or 400 depending on the API's handling of special characters in emails.  
+
+--- 
+
+These test cases help ensure the Login API behaves as expected across a range of scenarios, including valid use, error handling, and edge cases.

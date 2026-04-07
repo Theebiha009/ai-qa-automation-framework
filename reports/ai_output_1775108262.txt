@@ -1,0 +1,269 @@
+# API Test Cases for User Login
+
+## API Endpoint
+**POST** `/api/v1/login`
+
+## Functional Scenarios
+
+### Test Case 1: Successful Login
+- **Description:** Ensure that users can log in successfully with valid credentials.
+- **Request:**
+  - Method: POST
+  - Payload: 
+    ```json
+    {
+      "username": "validUser",
+      "password": "ValidPassword123!"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: 200
+  - Body:
+    ```json
+    {
+      "message": "Login successful",
+      "token": "validAuthToken"
+    }
+    ```
+
+### Test Case 2: Invalid Password
+- **Description:** Ensure that providing an incorrect password returns an error message.
+- **Request:**
+  - Method: POST
+  - Payload: 
+    ```json
+    {
+      "username": "validUser",
+      "password": "WrongPassword"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: 401
+  - Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+### Test Case 3: Lock Account After 5 Failed Attempts
+- **Description:** Ensure that the account locks after 5 consecutive failed login attempts.
+- **Steps:**
+  1. Attempt login with valid username and invalid password 5 times.
+     - Payload:
+       ```json
+       {
+         "username": "validUser",
+         "password": "WrongPassword"
+       }
+       ```
+     - Expected Result: Each attempt returns 401 status with an error message.
+  2. Attempt a 6th login with valid username and invalid password.
+- **Expected Response:**
+  - Status Code: 423 (Locked)
+  - Body:
+    ```json
+    {
+      "error": "Account locked due to multiple failed login attempts"
+    }
+    ```
+
+### Test Case 4: Status of Account Lock
+- **Description:** Ensure that a locked account cannot log in, and no other attempts are permitted until the account is unlocked.
+- **Request:**
+  - Method: POST
+  - Payload:
+    ```json
+    {
+      "username": "validUser",
+      "password": "AnotherWrongPassword"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: 423
+  - Body:
+    ```json
+    {
+      "error": "Account locked due to multiple failed login attempts"
+    }
+    ```
+
+## Negative Cases
+
+### Test Case 5: Non-Existent User
+- **Description:** Test the login with a non-existent username.
+- **Request:**
+  - Method: POST
+  - Payload: 
+    ```json
+    {
+      "username": "nonExistentUser",
+      "password": "AnyPassword"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: 401
+  - Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+### Test Case 6: Missing Username
+- **Description:** Test the login with missing username.
+- **Request:**
+  - Method: POST
+  - Payload: 
+    ```json
+    {
+      "password": "ValidPassword123!"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: 400
+  - Body:
+    ```json
+    {
+      "error": "Username is required"
+    }
+    ```
+
+### Test Case 7: Missing Password
+- **Description:** Test the login with missing password.
+- **Request:**
+  - Method: POST
+  - Payload: 
+    ```json
+    {
+      "username": "validUser"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: 400
+  - Body:
+    ```json
+    {
+      "error": "Password is required"
+    }
+    ```
+
+### Test Case 8: Empty Credentials
+- **Description:** Test the login with both username and password empty.
+- **Request:**
+  - Method: POST
+  - Payload: 
+    ```json
+    {
+      "username": "",
+      "password": ""
+    }
+    ```
+- **Expected Response:**
+  - Status Code: 400
+  - Body:
+    ```json
+    {
+      "error": "Username and password are required"
+    }
+    ```
+
+## Edge Cases
+
+### Test Case 9: Extremely Long Username
+- **Description:** Test the login with an excessively long username.
+- **Request:**
+  - Method: POST
+  - Payload: 
+    ```json
+    {
+      "username": "a".repeat(256), // 256 characters long
+      "password": "ValidPassword123!"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: 400
+  - Body:
+    ```json
+    {
+      "error": "Username exceeds maximum length"
+    }
+    ```
+
+### Test Case 10: Extremely Long Password
+- **Description:** Test the login with an excessively long password.
+- **Request:**
+  - Method: POST
+  - Payload: 
+    ```json
+    {
+      "username": "validUser",
+      "password": "b".repeat(256) // 256 characters long
+    }
+    ```
+- **Expected Response:**
+  - Status Code: 400
+  - Body:
+    ```json
+    {
+      "error": "Password exceeds maximum length"
+    }
+    ```
+
+## Security Considerations
+
+### Test Case 11: SQL Injection in Username Field
+- **Description:** Test for SQL injection attacks through the username parameter.
+- **Request:**
+  - Method: POST
+  - Payload: 
+    ```json
+    {
+      "username": "' OR '1'='1",
+      "password": "Anything"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: 401
+  - Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+### Test Case 12: XSS in Username Field
+- **Description:** Test for Cross-Site Scripting through the username parameter.
+- **Request:**
+  - Method: POST
+  - Payload: 
+    ```json
+    {
+      "username": "<script>alert('XSS')</script>",
+      "password": "ValidPassword123!"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: 401
+  - Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+### Test Case 13: Rate Limiting
+- **Description:** Ensure that the API has rate limiting applied to prevent brute force attacks.
+- **Action:** Rapidly send login requests.
+- **Expected Response After 10 Requests:**
+  - Status Code: 429 (Too Many Requests)
+  - Body:
+    ```json
+    {
+      "error": "Too many login attempts. Please try again later."
+    }
+    ```
+
+---
+
+This structured format provides clarity over functional, negative, edge cases, and security aspects of API testing for the user login process.

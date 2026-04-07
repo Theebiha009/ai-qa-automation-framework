@@ -1,162 +1,193 @@
 # 🤖 AI-Powered QA Automation Framework
 
-A scalable **API test automation framework** built using **Python + pytest**, enhanced with **AI capabilities** for intelligent test generation and failure analysis.
+An advanced API automation framework integrating **AI, embeddings, and intelligent bug analysis**. This project demonstrates how modern QA can evolve from traditional automation to **AI-driven quality engineering**.
 
 ---
 
-# 🚀 Key Features
+## 🚀 Features
 
-* ✅ API Automation using pytest & requests
-* ✅ Parallel execution using pytest-xdist
-* ✅ Data-driven testing (JSON & CSV)
-* ✅ Schema validation using jsonschema
-* ✅ Async API testing using aiohttp
+### ✅ Core Automation
+
+* Pytest-based API automation framework
+* Parallel execution using pytest-xdist
+* Data-driven testing (JSON/CSV support)
+* Modular and scalable architecture
 
 ### 🤖 AI Capabilities
 
-* 🔥 Generate pytest scripts from Swagger/OpenAPI
-* 🔥 AI Bug Analyzer (logs → root cause insights)
+* AI Test Case Generator (prompt-based)
+* Swagger → Pytest script generation
+* AI Bug Analyzer (log → root cause → severity)
+* Embedding-based duplicate bug detection
+
+### 📊 Reporting & Debugging
+
+* Allure reporting integration
+* JSON-based result storage
+* Individual test run tracking
+* Structured logs for debugging
 
 ---
 
-# 🧱 Project Structure
+## 🧠 AI Architecture
 
 ```
-ai-qa-automation-framework/
-│
-├── tests/                  # Stable test cases
-├── generated_tests/        # AI-generated tests (isolated)
-├── api/                    # API client & endpoints
-├── ai/                     # AI modules (generator, analyzer)
-├── utils/                  # Helpers & logging
-├── config/                 # Configuration handling
-├── data/                   # Test data (JSON/CSV)
-├── reports/                # Allure reports & logs
-├── requirements.txt
-├── pytest.ini
-└── README.md
+Logs → AI Analysis → Root Cause → Embedding → Similarity Check → Duplicate Detection
 ```
 
 ---
 
-# ⚙️ Setup Instructions
-
-## 1. Clone repository
+## 📂 Project Structure
 
 ```
-git clone <your-repo-url>
+ai/
+  ai_client.py
+  bug_analyzer.py
+  bug_similarity.py
+  swagger_test_generator.py
+
+utils/
+  logger.py
+
+tests/
+  test_bug_similarity.py
+
+data/
+  bug_store.json
+
+reports/
+  allure-results/
+
+generated_tests/   (AI-generated tests, excluded from pytest)
+```
+
+---
+
+## ⚙️ Setup
+
+### 1. Clone Repository
+
+```bash
+git clone https://github.com/Theebiha009/ai-qa-automation-framework.git
 cd ai-qa-automation-framework
 ```
 
-## 2. Create virtual environment
+---
 
-```
+### 2. Create Virtual Environment
+
+```bash
 python -m venv .venv
-.venv\Scripts\activate   # Windows
+.venv\Scripts\activate
 ```
 
-## 3. Install dependencies
+---
 
-```
+### 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
 ---
 
-# 🔐 Configuration
+### 4. Configure Environment Variables
 
-Set environment variables:
-
-```
-OPENAI_API_KEY=your_api_key
-BASE_URL=https://restful-booker.herokuapp.com
-```
-
----
-
-# 🧪 Running Tests
-
-## Run stable tests
+Create a `.env` file in root directory:
 
 ```
-pytest tests/
+OPENAI_API_KEY=your_openai_api_key
 ```
 
-## Run in parallel
+(Optional for future integrations)
 
 ```
-pytest -n auto tests/
-```
-
-## Run AI-generated tests (optional)
-
-```
-pytest generated_tests/
-```
-
-
----
-
-# 🤖 AI Features
-
-## 1. AI Test Generator
-
-**Input:** Swagger / API definition
-**Output:** Executable pytest scripts
-
-Example:
-
-```
-generator.generate_tests(swagger_text, "test_swagger_booking.py")
+JIRA_EMAIL=your_email
+JIRA_API_TOKEN=your_token
 ```
 
 ---
 
-## 2. AI Bug Analyzer
+## ▶️ Run Tests
 
-**Input:** Failure logs
-**Output:**
+Run all tests:
 
-* Root cause
-* Grouped issues
-* Insights
-
----
-
-# ⚡ Async API Testing
-
-Supports high-performance API testing using:
-
-```
-aiohttp
-async/await
+```bash
+pytest -v -s
 ```
 
----
+Run in parallel:
 
-# 🧠 Design Highlights
+```bash
+pytest -n auto
+```
 
-* Clean modular architecture
-* Reusable API client
-* Separation of stable vs AI tests
-* AI-assisted automation workflows
+Run specific test:
 
----
-
-# 📈 Why This Project?
-
-This framework demonstrates:
-
-* Real-world API automation
-* Scalable test design
-* Integration of AI into QA workflows
-* Parallel & async execution
-
-
+```bash
+pytest tests/test_bug_similarity.py -v
+```
 
 ---
 
-# 🙌 Author
+## 📊 Allure Reporting
 
-Theebiha Jeyashankar
-QA Automation Engineer | AI in Testing Enthusiast
+Generate results:
+
+```bash
+pytest --alluredir=reports/allure-results
+```
+
+View report:
+
+```bash
+allure serve reports/allure-results
+```
+
+---
+
+## 🧪 Example Use Cases
+
+* Analyze API failures using AI and extract root cause
+* Detect duplicate bugs using embeddings (semantic similarity)
+* Generate automated test scripts from Swagger/OpenAPI
+* Store and track bug analysis results over time
+
+---
+
+## 🧠 Key Concepts Used
+
+* LLM Prompt Engineering
+* Embeddings & Semantic Search
+* Cosine Similarity
+* AI-based Test Generation
+* Parallel Test Execution
+* Data-driven Testing
+
+---
+
+## 🎯 Why this project?
+
+This framework showcases how AI can enhance QA workflows by:
+
+* Reducing manual debugging effort
+* Preventing duplicate bug creation
+* Automatically generating test scenarios
+* Improving test intelligence and efficiency
+
+---
+
+## 👤 Author
+
+**Theebiha Jeyashankar**
+
+---
+
+## ⭐ Future Enhancements
+
+* Jira integration for auto bug creation
+* Vector database (FAISS / Pinecone)
+* CI/CD pipeline integration (GitHub Actions / Azure DevOps)
+* Dashboard for bug analytics
+
+---

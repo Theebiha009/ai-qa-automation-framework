@@ -1,0 +1,2 @@
+{'bookingid': 2200, 'booking': {'firstname': 'John53ca1', 'lastname': 'Doe', 'totalprice': 100, 'depositpaid': True, 'bookingdates': {'checkin': '2024-01-01', 'checkout': '2024-01-05'}, 'additionalneeds': 'Breakfast'}}
+{'bookingid': 2201, 'booking': {'firstname': 'Alice9eafe', 'lastname': 'Smith', 'totalprice': 200, 'depositpaid': False, 'bookingdates': {'checkin': '2024-02-01', 'checkout': '2024-02-03'}, 'additionalneeds': 'Lunch'}}

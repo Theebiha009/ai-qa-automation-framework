@@ -1,0 +1,199 @@
+Below are the detailed API test cases based on the provided user story. The test cases are categorized into functional scenarios, negative cases, edge cases, and security considerations.
+
+### API Test Cases for User Login
+
+#### Test Case 1: Successful Login
+- **Objective:** Verify that a user can successfully log in with valid credentials.
+- **Request:**
+  - Method: `POST`
+  - Endpoint: `/api/login`
+  - Body: 
+    ```json
+    {
+      "username": "validUser",
+      "password": "validPassword"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: `200 OK`
+  - Body:
+    ```json
+    {
+      "message": "Login successful",
+      "token": "JWT_TOKEN"
+    }
+    ```
+
+---
+
+#### Test Case 2: Invalid Password
+- **Objective:** Verify that an invalid password shows an error message.
+- **Request:**
+  - Method: `POST`
+  - Endpoint: `/api/login`
+  - Body: 
+    ```json
+    {
+      "username": "validUser",
+      "password": "invalidPassword"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: `401 Unauthorized`
+  - Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+---
+
+#### Test Case 3: Account Lock after 5 Failed Attempts
+- **Objective:** Verify that the account gets locked after 5 consecutive failed login attempts.
+- **Steps:**
+  1. Attempt to login with invalid credentials 5 times.
+- **Request:** (Repeat 5 times)
+  - Method: `POST`
+  - Endpoint: `/api/login`
+  - Body: 
+    ```json
+    {
+      "username": "validUser",
+      "password": "invalidPassword"
+    }
+    ```
+- **Expected Response:** (for attempts 1-5)
+  - Status Code: `401 Unauthorized`
+  - Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+- **Attempt 6:**
+  - Method: `POST`
+  - Endpoint: `/api/login`
+  - Body: 
+    ```json
+    {
+      "username": "validUser",
+      "password": "anyPassword"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: `423 Locked`
+  - Body:
+    ```json
+    {
+      "error": "Account is locked due to multiple failed login attempts"
+    }
+    ```
+
+---
+
+#### Test Case 4: Login with Non-Existent Username
+- **Objective:** Verify the system response for a login attempt with a non-existent username.
+- **Request:**
+  - Method: `POST`
+  - Endpoint: `/api/login`
+  - Body: 
+    ```json
+    {
+      "username": "nonExistentUser",
+      "password": "anyPassword"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: `401 Unauthorized`
+  - Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+---
+
+#### Test Case 5: SQL Injection Attempt
+- **Objective:** Check for SQL injection vulnerabilities.
+- **Request:**
+  - Method: `POST`
+  - Endpoint: `/api/login`
+  - Body: 
+    ```json
+    {
+      "username": "' OR '1'='1",
+      "password": "' OR '1'='1"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: `401 Unauthorized` (or appropriate error)
+  - Body:
+    ```json
+    {
+      "error": "Invalid username or password"
+    }
+    ```
+
+---
+
+#### Edge Cases
+
+##### Test Case 6: Login with Empty Username and Password
+- **Objective:** Verify the response when the username and password are empty.
+- **Request:**
+  - Method: `POST`
+  - Endpoint: `/api/login`
+  - Body: 
+    ```json
+    {
+      "username": "",
+      "password": ""
+    }
+    ```
+- **Expected Response:**
+  - Status Code: `400 Bad Request`
+  - Body:
+    ```json
+    {
+      "error": "Username and password cannot be empty"
+    }
+    ```
+
+---
+
+##### Test Case 7: Login with Special Characters in Username and Password
+- **Objective:** Verify system behavior with special characters.
+- **Request:**
+  - Method: `POST`
+  - Endpoint: `/api/login`
+  - Body: 
+    ```json
+    {
+      "username": "@special_user!",
+      "password": "@p@ssw0rd$"
+    }
+    ```
+- **Expected Response:**
+  - Status Code: `200 OK` (if credentials are valid)
+  - Body:
+    ```json
+    {
+      "message": "Login successful",
+      "token": "JWT_TOKEN"
+    }
+    ```
+
+---
+
+#### Security Considerations
+- Ensure that the login API is served over HTTPS to prevent eavesdropping.
+- Implement rate limiting to mitigate brute force attacks.
+- Log failed login attempts for monitoring but ensure no sensitive information is logged.
+- Ensure sensitive information (like passwords) are never returned in the API response.
+- Test for Cross-Site Scripting (XSS) vulnerabilities in error messages.
+
+--- 
+
+These test cases cover a comprehensive range of functional requirements, negative scenarios, edge cases, and security considerations to ensure robust testing of the user login API functionality.

@@ -1,0 +1,9 @@
+AI Result: Here is the combined analysis in a single JSON format:
+
+```json
+{
+    "root_cause": "Database connectivity issues",
+    "error_type": "Connection Error",
+    "severity": "Critical"
+}
+```

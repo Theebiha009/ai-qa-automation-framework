@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime
-
+import logging
 LOG_FILE = "reports/test_logs.json"
 
 
@@ -20,3 +20,4 @@ def log_json(data):
         logs.append(data)
         f.seek(0)
         json.dump(logs, f, indent=4)
+

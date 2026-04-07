@@ -1,0 +1,2 @@
+Login Response: {"token":"bb59129ddb685a2"}
+Create Booking Response: {"bookingid":705,"booking":{"firstname":"Alice","lastname":"Smith","totalprice":200,"depositpaid":false,"bookingdates":{"checkin":"2024-02-01","checkout":"2024-02-03"},"additionalneeds":"Lunch"}}
